@@ -1,0 +1,377 @@
+#:kivy 2.2.1
+
+<RoundedButton@Button>:
+    background_color: .65,.20,.08,0
+    background_normal: ""
+    canvas.before:
+        Color:
+            rgba: (.65,.20,.08,1) if self.state=='normal' else (0,.7,.7,1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [10,]
+    
+
+<RoundedToggleButton@ToggleButton>:
+    background_color: 0,0,0,0
+    canvas.before:
+        Color:
+            rgba: (.65,.20,.08,1) if self.state=='normal' else (0,.7,.7,1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [10,]
+
+<CitySearch>:
+    multiline: False
+    size_hint_y: None
+    height: "40dp"
+    hint_text: "Search for a city"
+
+<TopMenu>:
+    imperial: imperial_button
+    metric: metric_button
+    orientation: "horizontal"
+    text_input: search_input
+    size_hint_y: None
+    pos_hint: {"top": 1, 'x': 0.0}
+    height: "50dp"
+   
+    BoxLayout:
+        orientation: "horizontal"
+        padding: {"10dp", "10dp", "10dp", "20dp"}
+        margin: {"10dp", "10dp", "10dp", "10dp"}
+        spacing: "10dp"
+        CitySearch:
+            id: search_input
+            center_y: self.parent.center_y
+
+        RoundedButton:
+            text: 'Search'
+            size_hint_x: None
+            size_hint_y: None
+            width: "100dp"
+            height: "40dp" 
+            on_release: root.parent.parent.parent.search_button_pressed(search_input.text)
+        RoundedButton:
+            text: "Set\nLocation"
+            font_size: 14
+            size_hint_x: None
+            size_hint_y: None
+            width: "80dp"
+            height: "40dp"
+            on_release: root.set_location_pressed(search_input.text)
+
+        RoundedButton:
+            text: "+"
+            font_size: 16
+            size_hint_x: None
+            size_hint_y: None
+            width: "40dp"
+            height: "40dp"
+            on_release: root.add_favorite_pressed(search_input.text)
+
+        RoundedToggleButton:
+            id: imperial_button
+            text: "℉"
+            font_name: "Fonts/SF-Pro.ttf"
+            font_size: 16
+            group: 'temp_units_group'
+            size_hint_x: None
+            width: "40dp"
+            size_hint_y: None
+            height: "40dp"
+            state: root.get_default_units("imperial")
+            on_release: root.unit_button_pressed("imperial")
+
+        RoundedToggleButton:
+            id: metric_button
+            text: "℃"
+            font_name: "Fonts/SF-Pro.ttf"
+            font_size: 16
+            size_hint_x: None
+            width: "40dp"
+            size_hint_y: None
+            height: "40dp"
+            group: 'temp_units_group'
+            state: root.get_default_units("metric")
+            on_release: root.unit_button_pressed("metric")
+
+<CurrentWeather>:
+    current_temp_label: current_temp_label
+    current_conditions: current_conditions
+    current_city_label: current_city_label
+    current_sunrise_label: current_sunrise_value
+    current_sunset_label: current_sunset_value
+    current_humidity_label: current_humidity_value
+    current_wind_label: current_wind_label
+    current_pressure_label: current_pressure_value
+    current_visibility_label: current_visibility_value
+    size_hint_y: 1
+    size_hint_x: 1
+   
+    GridLayout:
+        id: current_conditions
+        orientation: "lr-tb"
+        center_y: self.parent.center_y
+        spacing: "10dp"
+        cols: 2
+        rows: 1
+        BoxLayout:
+            orientation: "vertical"
+            padding: "10dp", "10dp"
+            spacing: "10dp"
+            size_hint_x: None
+            width: "600dp"
+            canvas.before:
+                Color:
+                    rgba: 0.15, 0.15, 0.15, .5
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [10,]
+            
+            GridLayout:
+                padding: "5dp", "5dp"
+                spacing: "5dp"
+                orientation: "lr-tb"
+                cols: 2
+                rows: 3
+
+                Label:
+                    id: current_temp_label
+                    text: "57"
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 60
+                    halign: "left"
+                    color: 1, 1, 1, 1
+                
+                Image:
+                    id: current_weather_icon
+                    source: root.current_weather_icon
+                    allow_stretch: True
+                    
+                
+                Label:
+                    id: current_city_label
+                    text: "Mos Eisley"
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 36
+                    halign: "left"
+                    #pos_hint: {"x": 0}
+                    #padding: {"10dp", "10dp", "10dp", "10dp"}
+                    color: 1, 1, 1, 1
+                
+                Label:
+                    id: current_weather_description_label
+                    text: root.current_weather_description_label
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 18
+                    halign: "right"
+                    #padding: {"10dp", "10dp", "10dp", "10dp"}
+                    color: 1, 1, 1, 1
+                
+                Label:
+                    id: current_alert_label
+                    text: root.current_alert_label
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 18
+                    halign: "center"
+                    #padding: {"10dp", "10dp", "10dp", "10dp"}
+                    color: 1, 1, 1, 1
+     
+        BoxLayout:
+            orientation: "vertical"
+            padding: "10dp", "10dp"
+            spacing: "10dp"
+            canvas.before:
+                Color:
+                    rgba: 0.15, 0.15, 0.15, .5
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [10,]
+            
+            GridLayout:
+                padding: "10dp", "10dp"
+                spacing: "10dp"
+                orientation: "lr-tb"
+                cols: 2
+                rows: 6
+                Label:
+                    text: "Sunrise:"
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 24
+                    color: 1, 1, 1, 1
+                Label:
+                    id: current_sunrise_value
+                    text: ""
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 24
+                    color: 1, 1, 1, 1
+                Label:
+                    text: "Sunset:"
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 24
+                    color: 1, 1, 1, 1
+                Label:
+                    id: current_sunset_value
+                    text: ""
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 24
+                    color: 1, 1, 1, 1
+                Label:
+                    text: "Humidity:"
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 24
+                    color: 1, 1, 1, 1
+                Label:
+                    id: current_humidity_value
+                    text: ""
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 24
+                    color: 1, 1, 1, 1
+
+
+                Label:
+                    text: "Wind:"
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 24
+                    color: 1, 1, 1, 1
+                Label:
+                    id: current_wind_label
+                    text: ""
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 24
+                    color: 1, 1, 1, 1
+                Label:
+
+                    text: "Pressure:"
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 24
+                    color: 1, 1, 1, 1
+                Label:
+                    id: current_pressure_value
+                    text: ""
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 24
+                    color: 1, 1, 1, 1
+                Label:
+
+                    text: "Visibility:"
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 24
+                    color: 1, 1, 1, 1
+                Label:
+                    id: current_visibility_value
+                    text: ""
+                    font_name: "fonts/SF-Pro.ttf"
+                    font_size: 24
+                    color: 1, 1, 1, 1
+
+<DailyWeather>:
+    spacing: "10dp"
+    
+    BoxLayout:
+        id: daily_weather_layout
+        orientation: "vertical"
+        padding: "10dp", "10dp"
+        spacing: "10dp"
+
+        canvas.before:
+            Color:
+                rgba: 0.15, 0.15, 0.15, .5
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [10,]
+        BoxLayout:
+            id: daily_conditions
+            padding: "10dp"
+            spacing: "20dp"
+            orientation: "vertical"
+
+            Label:
+                id: day_label
+                text: root.day_label
+                font_name: "fonts/SF-Pro.ttf"
+                font_size: 24
+                size_hint_y: None
+                size_hint_x: None
+                height: "30dp"
+                width: "200dp"  # Adjusted width for better alignment
+                pos_hint: {"center_x": 0.5}  # Center horizontally
+                color: 1, 1, 1, 1
+
+            Label:
+                id: daily_temp_label
+                text: root.daily_temp_label
+                font_name: "fonts/SF-Pro.ttf"
+                font_size: 42
+                size_hint_y: None
+                size_hint_x: None
+                height: "50dp"
+                width: "200dp"  # Adjusted width for better alignment
+                pos_hint: {"center_x": 0.5}  # Center horizontally
+                color: 1, 1, 1, 1
+            Label:
+                id: daily_description_label
+                text: root.daily_description_label
+                font_name: "fonts/SF-Pro.ttf"
+                font_size: "12dp"
+                size_hint_y: None
+                size_hint_x: None
+                height: "15dp"
+                width: "200dp"  # Adjusted width for better alignment
+                pos_hint: {"center_x": 0.5}  # Center horizontally
+                color: 1, 1, 1, 1
+
+            Image:
+                id: daily_weather_icon
+                source: root.daily_weather_icon
+                allow_stretch: True
+                size_hint_y: None
+                size_hint_x: None
+                height: "80dp"
+                width: "80dp"
+                pos_hint: {"center_x": 0.5}  # Center horizontally
+
+
+<Weather>:
+    top_menu: top_menu
+    current_weather: current_weather
+    daily_weather: daily_weather
+    orientation: "vertical"
+    FloatLayout:
+        Image:
+            source: 'images/jawas.png'
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        BoxLayout:
+            orientation: "vertical"
+            padding: "10dp", "10dp"
+            spacing: "10dp"
+            TopMenu:
+                id: top_menu
+            CurrentWeather:
+                id: current_weather
+                margin: {"30dp", "10dp", "10dp", "30dp"}
+                padding: {"10dp", "10dp", "10dp", "10dp"}
+                orientation: "horizontal"
+                pos_hint: {"top": 1}
+            ScrollView:
+                DailyWeather:
+                    id: daily_weather
+                    pos_hint: {"bottom": 1}
+                    size_hint: None, 1
+                    width: max(self.minimum_width , root.width + dp(1000))
+
+
+
+
+
+
+
+

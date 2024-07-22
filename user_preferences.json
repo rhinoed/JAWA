@@ -1,0 +1,13 @@
+{
+    "units": "imperial",
+    "saved_location": false,
+    "location": {
+        "name": "",
+        "lat": "",
+        "lon": "",
+        "country": "",
+        "state": "",
+        "state_code_usa": ""
+    },
+    "favorites": []
+}
