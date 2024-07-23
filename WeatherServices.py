@@ -2,7 +2,7 @@ import os
 import requests
 from GeocodeCity import Results
 from OneCallModel import WeatherData
-from UserPreferences import UserPreferences
+from UserPreferences import UserPreferences, UserLocation
 
 
 class WeatherServices:
@@ -31,14 +31,29 @@ class WeatherServices:
     @classmethod
     def get_weather_for(cls, city):
         """Returns a WeatherData object for the given city"""
-        user_prefs = UserPreferences(**UserPreferences.load())
+        cls.user_prefs = UserPreferences(**UserPreferences.load())
         try:
             location = Results(cls.geo_locate(city)).cities[0]
-            one_call = f"https://api.openweathermap.org/data/3.0/onecall?lat={location.lat}&lon={location.lon}&units={user_prefs.units}&appid={cls.api_key}"
+            one_call = f"https://api.openweathermap.org/data/3.0/onecall?lat={location.lat}&lon={location.lon}&units={cls.user_prefs.units}&appid={cls.api_key}"
             request = requests.get(one_call).json()
             print(request)
             return {
                     "city": location,
+                    "weather": WeatherData(**request)
+                    }
+
+        except ValueError as ve:
+            print(ve)
+    
+    @classmethod
+    def get_weather_for_location(cls, user_prefs: UserPreferences):
+        cls.user_prefs = UserPreferences(**UserPreferences.load())
+        try:
+            one_call = f"https://api.openweathermap.org/data/3.0/onecall?lat={user_prefs.location.lat}&lon={user_prefs.location.lon}&units={user_prefs.units}&appid={cls.api_key}"
+            request = requests.get(one_call).json()
+            
+            return {
+                    "city": user_prefs.location,
                     "weather": WeatherData(**request)
                     }
 

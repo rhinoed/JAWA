@@ -5,7 +5,7 @@
     background_normal: ""
     canvas.before:
         Color:
-            rgba: (.65,.20,.08,1) if self.state=='normal' else (0,.7,.7,1)
+            rgba: (.65,.20,.08,1) if self.state=='normal' else (.25,.25,.25,1)
         RoundedRectangle:
             pos: self.pos
             size: self.size
@@ -16,15 +16,25 @@
     background_color: 0,0,0,0
     canvas.before:
         Color:
-            rgba: (.65,.20,.08,1) if self.state=='normal' else (0,.7,.7,1)
+            rgba: (.65,.20,.08,1) if self.state=='normal' else (.25,.25,.25,1)
         RoundedRectangle:
             pos: self.pos
             size: self.size
             radius: [10,]
 
 <CitySearch>:
+    # canvas.before:
+    #     Color:
+    #         rgba: (.15,.15,.15,.5)
+    #     RoundedRectangle:
+    #         pos: self.pos
+    #         size: self.size
+    #         radius: [10,]
+    background_color: .15, .15, .15, .5
+    foreground_color: 1,1,1,1
     multiline: False
     size_hint_y: None
+    padding: "10dp"
     height: "40dp"
     hint_text: "Search for a city"
 
@@ -60,6 +70,7 @@
             size_hint_y: None
             width: "80dp"
             height: "40dp"
+            halign: "center"
             on_release: root.set_location_pressed(search_input.text)
 
         RoundedButton:
@@ -149,7 +160,9 @@
                 Image:
                     id: current_weather_icon
                     source: root.current_weather_icon
-                    allow_stretch: True
+                    size_hint: 1, 1
+                    halign: "right"
+                    allow_stretch: False
                     
                 
                 Label:
@@ -176,9 +189,10 @@
                     text: root.current_alert_label
                     font_name: "fonts/SF-Pro.ttf"
                     font_size: 18
-                    halign: "center"
+                    halign: "left"
                     #padding: {"10dp", "10dp", "10dp", "10dp"}
                     color: 1, 1, 1, 1
+                
      
         BoxLayout:
             orientation: "vertical"

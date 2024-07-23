@@ -1,13 +1,13 @@
 {
     "units": "imperial",
-    "saved_location": false,
+    "saved_location": true,
     "location": {
-        "name": "",
-        "lat": "",
-        "lon": "",
-        "country": "",
-        "state": "",
-        "state_code_usa": ""
+        "name": "Fresno",
+        "lat": 36.7295295,
+        "lon": -119.70886126075588,
+        "country": "US",
+        "state": "California",
+        "state_code_usa": "CA"
     },
     "favorites": []
 }
