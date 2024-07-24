@@ -1,8 +1,37 @@
 from datetime import datetime as dt
+import math
 class Constants():
+    weather_units = {
+            "imperial_wind_speed": "MPH",
+            "metric_wind_speed": "m/s",
+            "pressure": "hPa",
+            "imperial_pressure": "inHg",
+            "metric_pressure": "mmHg",
+            "humidity": "%",
+            "imperial_visability": "miles",
+            "metric_visability": "meters"
+        }
+    def __init__(self) -> None:
+        raise NotImplementedError("This class cannot be instantiated")
+    @staticmethod
+    def convert_visability(meters: int) -> str:
+        miles = meters / 1609.344
+        return str(f"{math.floor(miles)} {Constants.weather_units["imperial_visability"]}")
     
     @staticmethod
-    def get_code_class( code: str) -> str:
+    def convert_pressure(unints: str, pressure: int) -> str:
+        match unints:
+            # Convert pressure to imperial
+            case "imperial":
+                # limit the decimal places to 2
+                return f"{round(pressure * 0.02953, 2)} {Constants.weather_units["imperial_pressure"]}"
+            # Convert pressure to metric
+            case "metric":
+                return f"{round(pressure * 0.750064)} {Constants.weather_units["metric_pressure"]}"
+    
+    
+    @staticmethod
+    def get_code_class(code: str) -> str:
         match int(code):
             case 800:
                 return "800"

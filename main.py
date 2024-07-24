@@ -36,11 +36,16 @@ class Weather(BoxLayout):
         super().__init__(**kwargs)
         prefs = UserPreferences.UserPreferences(**UserPreferences.UserPreferences.load())
         if prefs.saved_location:
-            forecast = WeatherServices.get_weather_for(prefs.location.name)
+            forecast = WeatherServices.get_weather_for_location(prefs)
             self.weather_output = forecast["weather"]
             self.city = forecast["city"]
             self.top_menu.weather_response = self.weather_output
             self.output_weather()
+        if len(prefs.favorites) != 0:
+            for city in prefs.favorites:
+                view = Favorite()
+                view.favorite_location = city
+                self.top_menu.add_widget(view)
     def search_button_pressed(self, text_input):
         if text_input == "":
             self.top_menu.text_input.hint_text = "You must enter a city"
@@ -67,46 +72,63 @@ class Weather(BoxLayout):
                 raise ValueError("Invalid unit type")
 
     def output_weather(self):
+        units = UserPreferences.UserPreferences(**UserPreferences.UserPreferences.load()).units
         if self.weather_output == None:
             raise ValueError("No weather data to display")
         else:
-            self.current_weather.current_city_label.text = self.city.name
+            # Current weather
+            # Set temperature
             self.current_weather.current_temp_label.text = str(
-                f"{math.floor(self.weather_output.current.temp)} {self.get_user_preferred_unints()}")
+                f"{math.floor(self.weather_output.current.temp)} {self.get_user_preferred_unints()}"
+            )
+            # Set the city name
+            self.current_weather.current_city_label.text = self.city.name
+            # Set the alert label if there is an alert
             self.current_weather.current_alert_label = "" if self.weather_output.alerts == None else f"⚠️ {self.weather_output.alerts[0].event}"
-            self.current_weather.current_weather_description_label = self.weather_output.current.weather[0].main
+            
+            # Set the current weather icon
             self.current_weather.current_weather_icon = f"icons/{k.get_icon_for_condition(
                 self.weather_output.current.weather[0].id,
                 self.weather_output.current.dt,
                 self.weather_output.current.sunset,
                 self.weather_output.current.sunrise
             )}"
-            self.current_weather.current_humidity_label.text = str(self.weather_output.current.humidity)
-            self.current_weather.current_pressure_label.text = str(self.weather_output.current.pressure)
-            self.current_weather.current_wind_label.text = str(self.weather_output.current.wind_speed)
-            self.current_weather.current_visibility_label.text = str(self.weather_output.current.visibility)
+            # Set the current weather description
+            self.current_weather.current_weather_description_label = self.weather_output.current.weather[0].main
+            # Current weather details
+            # Set sunrise
             self.current_weather.current_sunrise_label.text = datetime.fromtimestamp(
-                self.weather_output.current.sunrise).strftime("%H:%M")
+                self.weather_output.current.sunrise).strftime('%-I:%M %p')
+            # Set sunset
             self.current_weather.current_sunset_label.text = datetime.fromtimestamp(
-                self.weather_output.current.sunset).strftime("%H:%M")
-
+                self.weather_output.current.sunset).strftime('%-I:%M %p')
+            # Set humidity
+            self.current_weather.current_humidity_label.text = f"{str(self.weather_output.current.humidity)} {k.weather_units["humidity"]}"
+            # Set pressure
+            self.current_weather.current_pressure_label.text = k.convert_pressure(units, int(self.weather_output.current.pressure))
+            # Set wind speed
+            self.current_weather.current_wind_label.text = f"{str(self.weather_output.current.wind_speed)} {k.weather_units[f"{units}_wind_speed"]}"
+            # Set visibility
+            self.current_weather.current_visibility_label.text = f"{self.weather_output.current.visibility} {k.weather_units["metric_visability"]}" if units == "metric" else k.convert_visability(self.weather_output.current.visibility)
+            # Clear the existing daily view section
             self.daily_weather.clear_widgets()
-            current_time = self.weather_output.current.dt
+
+            # Iterate over daily forecast to create the daily weather section
             for day in self.weather_output.daily:
-                print(day)
-                date = datetime.fromtimestamp(day.dt).strftime('%A,  %d')
+                # Create view
                 view = DailyWeather()
-                view.day_label = date
+                view.day_label = DailyWeather.get_day_from_timestamp(day.dt)
                 view.daily_temp_label = str(f"{math.floor(day.temp.max)}{self.get_user_preferred_unints()}")
-                view.daily_description_label = day.weather[0].description
-                icon = k.get_icon_for_condition(str(day.weather[0].id), current_time, day.sunset, day.sunrise)
+                view.daily_description_label = day.weather[0].main
+                icon = f"{day.weather[0].icon}@2x.png"
                 view.daily_weather_icon = f"icons/{icon}"
+                # Add view to window
                 self.daily_weather.add_widget(view)
 
 
-class DailyView(BoxLayout):
-    """This class will display the daily weather forecast. Defined in the .kv file"""
-    pass
+#class DailyView(BoxLayout):
+#    """This class will display the daily weather forecast. Defined in the .kv file"""
+#    pass
 
 
 class CurrentWeather(BoxLayout):
@@ -175,7 +197,14 @@ class DailyWeather(BoxLayout):
 
     @staticmethod
     def get_day_from_timestamp(timestamp):
-        return datetime.fromtimestamp(timestamp).strftime("%A")
+        return datetime.fromtimestamp(timestamp).strftime("%A,  %d")
+
+class Favorite(BoxLayout):
+    favorite_location = ObjectProperty(None)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        
+
 
 
 class CitySearch(TextInput):
