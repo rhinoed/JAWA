@@ -23,11 +23,7 @@
             radius: [10,]
         
 <Favorite>:
-    size_hint_y: None
-    height: self.minimum_height
     spacing: "10dp"
-    #favorite_location: favorite_location
-    #favorite_weather: favorite_weather
     BoxLayout:
         #id: favorite_layout
         canvas.before:
@@ -42,23 +38,27 @@
             #id: favorite_location_layout
             orientation: "vertical"
             padding: "10dp", "10dp"
-            size_y: self.minimum_height
+            size_hint: None, None 
+            width: "200dp"
+            height: "80dp"
             spacing: "10dp"
+            pos_hint: {"center_x": 0.5}  # Center horizontally
             Label:
                 text: root.favorite_label
+                padding: "10dp", "10dp"
                 font_name: "fonts/SF-Pro.ttf"
                 font_size: 24
                 color: 1, 1, 1, 1
-                size_hint_y: None
-                halign: "center"
+                size_hint: None, None
+                halign: "left"
                 height: "30dp"
-                width: "200dp"  # Adjusted width for better alignment
+                #width: "200dp"  # Adjusted width for better alignment
                 #pos_hint: {"center_x": 0.5}  # Center horizontally
             RoundedButton:
                 text: "Get\nWeather"
                 font_name: "fonts/SF-Pro.ttf"
                 font_size: 14
-                size_hint_y: None
+                size_hint: None, None
                 halign: "center"
                 height: "40dp"
                 width: "80dp"  # Adjusted width for better alignment
@@ -249,7 +249,6 @@
                     pos: self.pos
                     size: self.size
                     radius: [10,]
-            
             GridLayout:
                 padding: "10dp", "10dp"
                 spacing: "10dp"
@@ -430,7 +429,6 @@
             ScrollView:
                 DailyWeather:
                     id: daily_weather
-                    pos_hint: {"bottom": 1}
                     size_hint: None, 1
                     width: max(self.minimum_width , root.width + dp(1000))
             
@@ -438,7 +436,8 @@
                 id: favorite_scroll
                 Favorite:
                     id: favorite
-                    size_hint: None, 1
+                    #size_hint: None, 1
+                    pos_hint: {"bottom": 1}
                     width: max(self.minimum_width , root.width + dp(1000))
                     
 
