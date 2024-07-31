@@ -139,7 +139,7 @@ class Weather(BoxLayout):
                 for location in user_prefs.favorites:
                     view = Favorite()
                     view.favorite_location = location
-                    view.favorite_label = location.name
+                    view.favorite_city_label = f"{location.name}, {k.get_state_code(location.state)}" if location.state != None else f"{location.name}, {location.country}"
                     # creae a binding object to the weather class instance
                     view.weather_binding = self
                     self.favorite.add_widget(view)
@@ -233,7 +233,7 @@ class Favorite(BoxLayout):
     favorite_location = ObjectProperty(None)
     favorite_forecast = ObjectProperty(None)
     weather_binding = ObjectProperty(None)
-    favorite_label = StringProperty("")
+    favorite_city_label = StringProperty("")
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
 

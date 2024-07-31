@@ -44,16 +44,16 @@
             spacing: "10dp"
             pos_hint: {"center_x": 0.5}  # Center horizontally
             Label:
-                text: root.favorite_label
+                text: root.favorite_city_label
                 padding: "10dp", "10dp"
                 font_name: "fonts/SF-Pro.ttf"
                 font_size: 24
                 color: 1, 1, 1, 1
                 size_hint: None, None
-                halign: "left"
+                halign: "center"
                 height: "30dp"
-                #width: "200dp"  # Adjusted width for better alignment
-                #pos_hint: {"center_x": 0.5}  # Center horizontally
+                width: "200dp"  # Adjusted width for better alignment
+                pos_hint: {"center_x": 0.5}  # Center horizontally
             RoundedButton:
                 text: "Get\nWeather"
                 font_name: "fonts/SF-Pro.ttf"
@@ -206,7 +206,7 @@
                     source: root.current_weather_icon
                     size_hint: 1, 1
                     halign: "right"
-                    allow_stretch: False
+                    fit_mode: "scale-down"
                     
                 
                 Label:
@@ -334,7 +334,7 @@
         orientation: "vertical"
         padding: "10dp", "10dp"
         spacing: "10dp"
-
+        size_hint: 1, 1
         canvas.before:
             Color:
                 rgba: 0.15, 0.15, 0.15, .5
@@ -347,16 +347,19 @@
             padding: "10dp"
             spacing: "20dp"
             orientation: "vertical"
-
+            size_hint: 1, 1
+            #width: "200dp"
+            #height: "200dp"
+            pos_hint: {"center_x": 0.5}
             Label:
                 id: day_label
                 text: root.day_label
                 font_name: "fonts/SF-Pro.ttf"
-                font_size: 24
-                size_hint_y: None
-                size_hint_x: None
-                height: "30dp"
-                width: "200dp"  # Adjusted width for better alignment
+                font_size: "28dp"
+                size_hint_y: 1
+                size_hint_x: 1
+                #height: "30dp"
+                #width: "200dp"  # Adjusted width for better alignment
                 pos_hint: {"center_x": 0.5}  # Center horizontally
                 color: 1, 1, 1, 1
 
@@ -364,29 +367,29 @@
                 id: daily_temp_label
                 text: root.daily_temp_label
                 font_name: "fonts/SF-Pro.ttf"
-                font_size: 42
-                size_hint_y: None
-                size_hint_x: None
-                height: "50dp"
-                width: "200dp"  # Adjusted width for better alignment
+                font_size: "28dp"
+                size_hint_y: 1
+                size_hint_x: 1
+                #height: "50dp"
+                #width: "200dp"  # Adjusted width for better alignment
                 pos_hint: {"center_x": 0.5}  # Center horizontally
                 color: 1, 1, 1, 1
             Label:
                 id: daily_description_label
                 text: root.daily_description_label
                 font_name: "fonts/SF-Pro.ttf"
-                font_size: "12dp"
-                size_hint_y: None
-                size_hint_x: None
-                height: "15dp"
-                width: "200dp"  # Adjusted width for better alignment
+                font_size: "14dp"
+                size_hint_y: 1
+                size_hint_x: 1
+                #height: "15dp"
+                #width: "200dp"  # Adjusted width for better alignment
                 pos_hint: {"center_x": 0.5}  # Center horizontally
                 color: 1, 1, 1, 1
-
             Image:
                 id: daily_weather_icon
                 source: root.daily_weather_icon
-                size: self.texture_size
+                size_hint: None, 1
+                fit_mode: "scale-down"
                 pos_hint: {"center_x": 0.5}  # Center horizontally
 
 
@@ -405,7 +408,7 @@
             id: background_image
             source: 'images/jawas.png'
             allow_stretch: True
-            fit_mode: "fill"
+            fit_mode: "cover"
             size: self.texture_size
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
         BoxLayout:
@@ -427,6 +430,7 @@
                 pos_hint: {"top": 1}
             
             ScrollView:
+                size_hint: 1, 1
                 DailyWeather:
                     id: daily_weather
                     size_hint: None, 1
@@ -434,10 +438,10 @@
             
             ScrollView:
                 id: favorite_scroll
+                size_hint: 1, .45
                 Favorite:
                     id: favorite
-                    #size_hint: None, 1
-                    pos_hint: {"bottom": 1}
+                    size_hint: None, 1
                     width: max(self.minimum_width , root.width + dp(1000))
                     
 
