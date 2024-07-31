@@ -46,14 +46,18 @@ class WeatherServices:
             print(ve)
     
     @classmethod
-    def get_weather_for_location(cls, user_prefs: UserPreferences):
+    def get_weather_for_location(cls, user_prefs: UserPreferences, city=None):
         cls.user_prefs = UserPreferences(**UserPreferences.load())
         try:
-            one_call = f"https://api.openweathermap.org/data/3.0/onecall?lat={user_prefs.location.lat}&lon={user_prefs.location.lon}&units={user_prefs.units}&appid={cls.api_key}"
+            if city:
+                #location = Results(cls.geo_locate(city)).cities[0]
+                one_call = f"https://api.openweathermap.org/data/3.0/onecall?lat={city.lat}&lon={city.lon}&units={cls.user_prefs.units}&appid={cls.api_key}"
+            else:
+                one_call = f"https://api.openweathermap.org/data/3.0/onecall?lat={user_prefs.location.lat}&lon={user_prefs.location.lon}&units={user_prefs.units}&appid={cls.api_key}"
             request = requests.get(one_call).json()
             
             return {
-                    "city": user_prefs.location,
+                    "city": user_prefs.location if user_prefs else city,
                     "weather": WeatherData(**request)
                     }
 

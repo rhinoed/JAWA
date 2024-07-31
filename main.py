@@ -9,7 +9,7 @@ import math
 import UserPreferences
 from K import Constants as k
 from WeatherServices import WeatherServices
-from GeocodeCity import Results
+from GeocodeCity import Results, City
 from datetime import datetime
 from kivy.app import App
 from kivy.properties import ObjectProperty
@@ -20,8 +20,8 @@ from kivy.uix.label import Label
 from kivy.uix.stacklayout import StackLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.widget import Widget
+from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
-
 from kivy.uix.button import Button
 
 
@@ -31,6 +31,7 @@ class Weather(BoxLayout):
     city = ObjectProperty(None)
     daily_weather = ObjectProperty(None)
     current_weather = ObjectProperty(None)
+    favorite = ObjectProperty(None)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -41,11 +42,13 @@ class Weather(BoxLayout):
             self.city = forecast["city"]
             self.top_menu.weather_response = self.weather_output
             self.output_weather()
-        if len(prefs.favorites) != 0:
-            for city in prefs.favorites:
-                view = Favorite()
-                view.favorite_location = city
-                self.top_menu.add_widget(view)
+        # if len(prefs.favorites) == 0:
+        #     print("favorites is empty")
+        #     self.remove_widget(self.current_weather)
+        #     self.remove_widget(self.favorite)
+        #     self.remove_widget(self.ids.float_layout.weather.favorite_scroll)
+        #     #self.favorite.remove_widget(self.ids.favorite)
+        
     def search_button_pressed(self, text_input):
         if text_input == "":
             self.top_menu.text_input.hint_text = "You must enter a city"
@@ -70,9 +73,16 @@ class Weather(BoxLayout):
                 return str(chr(0x2109))
             case _:
                 raise ValueError("Invalid unit type")
+            
+    def get_favorite_weather(self,location):
+        forecast = WeatherServices.get_weather_for_location(None, location)
+        self.weather_output = forecast["weather"]
+        self.city = forecast["city"]
+        self.output_weather()
 
     def output_weather(self):
-        units = UserPreferences.UserPreferences(**UserPreferences.UserPreferences.load()).units
+        user_prefs = UserPreferences.UserPreferences(**UserPreferences.UserPreferences.load())
+        units = user_prefs.units
         if self.weather_output == None:
             raise ValueError("No weather data to display")
         else:
@@ -112,7 +122,6 @@ class Weather(BoxLayout):
             self.current_weather.current_visibility_label.text = f"{self.weather_output.current.visibility} {k.weather_units["metric_visability"]}" if units == "metric" else k.convert_visability(self.weather_output.current.visibility)
             # Clear the existing daily view section
             self.daily_weather.clear_widgets()
-
             # Iterate over daily forecast to create the daily weather section
             for day in self.weather_output.daily:
                 # Create view
@@ -124,7 +133,20 @@ class Weather(BoxLayout):
                 view.daily_weather_icon = f"icons/{icon}"
                 # Add view to window
                 self.daily_weather.add_widget(view)
-
+            # Create favorite view
+            if len(user_prefs.favorites) != 0:
+                self.favorite.clear_widgets()
+                for location in user_prefs.favorites:
+                    view = Favorite()
+                    view.favorite_location = location
+                    view.favorite_label = location.name
+                    # creae a binding object to the weather class instance
+                    view.weather_binding = self
+                    self.favorite.add_widget(view)
+            else:
+                self.favorite.clear_widgets()
+                self.remove_widget(self.ids.favorite)
+        
 
 #class DailyView(BoxLayout):
 #    """This class will display the daily weather forecast. Defined in the .kv file"""
@@ -185,6 +207,14 @@ class TopMenu(BoxLayout):
         else:
             print("No city provided") 
 
+    def add_button_pressed(self, city: str):
+        prefs = UserPreferences.UserPreferences(**UserPreferences.UserPreferences.load())
+        if city != "":
+            location = Results(WeatherServices.geo_locate(city)).cities[0]
+            prefs.add_to_favorites(location)
+            print(self.weather_response)
+        else:
+            print("No city provided")
 
 class DailyWeather(BoxLayout):
     day_label = StringProperty("")
@@ -201,8 +231,22 @@ class DailyWeather(BoxLayout):
 
 class Favorite(BoxLayout):
     favorite_location = ObjectProperty(None)
-    def __init__(self, **kwargs):
+    favorite_forecast = ObjectProperty(None)
+    weather_binding = ObjectProperty(None)
+    favorite_label = StringProperty("")
+    def __init__(self,**kwargs):
         super().__init__(**kwargs)
+
+        
+    def disable_favorite(self):
+        user_prefs = UserPreferences.UserPreferences(**UserPreferences.UserPreferences.load())
+        
+        
+    
+    def get_favorite_weather(self):
+        #forecast = WeatherServices.get_weather_for_location(None,self.favorite_location)
+        #self.favorite_forecast = forecast["weather"]
+        print(self.favorite_location.name)
         
 
 

@@ -1,4 +1,4 @@
-#:kivy 2.2.1
+#:kivy 2.3.0
 
 <RoundedButton@Button>:
     background_color: .65,.20,.08,0
@@ -21,6 +21,50 @@
             pos: self.pos
             size: self.size
             radius: [10,]
+        
+<Favorite>:
+    size_hint_y: None
+    height: self.minimum_height
+    spacing: "10dp"
+    #favorite_location: favorite_location
+    #favorite_weather: favorite_weather
+    BoxLayout:
+        #id: favorite_layout
+        canvas.before:
+            Color:
+                rgba: 0.15, 0.15, 0.15, .5
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [10,]
+        orientation: "vertical"
+        BoxLayout:
+            #id: favorite_location_layout
+            orientation: "vertical"
+            padding: "10dp", "10dp"
+            size_y: self.minimum_height
+            spacing: "10dp"
+            Label:
+                text: root.favorite_label
+                font_name: "fonts/SF-Pro.ttf"
+                font_size: 24
+                color: 1, 1, 1, 1
+                size_hint_y: None
+                halign: "center"
+                height: "30dp"
+                width: "200dp"  # Adjusted width for better alignment
+                #pos_hint: {"center_x": 0.5}  # Center horizontally
+            RoundedButton:
+                text: "Get\nWeather"
+                font_name: "fonts/SF-Pro.ttf"
+                font_size: 14
+                size_hint_y: None
+                halign: "center"
+                height: "40dp"
+                width: "80dp"  # Adjusted width for better alignment
+                pos_hint: {"center_x": 0.5}  # Center horizontally
+                on_release: root.weather_binding.get_favorite_weather(root.favorite_location)
+
 
 <CitySearch>:
     # canvas.before:
@@ -80,7 +124,7 @@
             size_hint_y: None
             width: "40dp"
             height: "40dp"
-            on_release: root.add_favorite_pressed(search_input.text)
+            on_release: root.add_button_pressed(search_input.text)
 
         RoundedToggleButton:
             id: imperial_button
@@ -343,27 +387,34 @@
             Image:
                 id: daily_weather_icon
                 source: root.daily_weather_icon
-                allow_stretch: True
-                size_hint_y: None
-                size_hint_x: None
-                height: "80dp"
-                width: "80dp"
+                size: self.texture_size
                 pos_hint: {"center_x": 0.5}  # Center horizontally
 
 
 <Weather>:
+    id: weather_main
     top_menu: top_menu
     current_weather: current_weather
     daily_weather: daily_weather
+    favorite: favorite
     orientation: "vertical"
     FloatLayout:
+        image: background_image
+        weather: weather_layout
+        id: float_layout
         Image:
+            id: background_image
             source: 'images/jawas.png'
             allow_stretch: True
-            keep_ratio: False
-            size_hint: 1, 1
+            fit_mode: "fill"
+            size: self.texture_size
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
         BoxLayout:
+            menu: top_menu
+            current: current_weather
+            #favorite_scroll: favorite_scroll
+            daily: daily_weather
+            id: weather_layout
             orientation: "vertical"
             padding: "10dp", "10dp"
             spacing: "10dp"
@@ -375,12 +426,21 @@
                 padding: {"10dp", "10dp", "10dp", "10dp"}
                 orientation: "horizontal"
                 pos_hint: {"top": 1}
+            
             ScrollView:
                 DailyWeather:
                     id: daily_weather
                     pos_hint: {"bottom": 1}
                     size_hint: None, 1
                     width: max(self.minimum_width , root.width + dp(1000))
+            
+            ScrollView:
+                id: favorite_scroll
+                Favorite:
+                    id: favorite
+                    size_hint: None, 1
+                    width: max(self.minimum_width , root.width + dp(1000))
+                    
 
 
 
