@@ -11,6 +11,19 @@ class Constants():
             "imperial_visability": "miles",
             "metric_visability": "meters"
         }
+    
+    user_init_location_dict = {
+            "name": "", "lat": 0.0,
+            "lon": 0.0, "country": "",
+            "state": "",
+            "state_code_usa": ""
+        }
+    user_pref_init_dict = {
+            "units": "imperial",
+            "saved_location": False,
+            "location": user_init_location_dict,
+            "favorites": []
+        }
     def __init__(self) -> None:
         raise NotImplementedError("This class cannot be instantiated")
     @staticmethod

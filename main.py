@@ -240,9 +240,11 @@ class Favorite(BoxLayout):
 
 class JAWAApp(App):
     def build(self):
+        # Set the window size
         Window.size = (1200, 600)
         return Weather()
 
 
 if __name__ == "__main__":
+    # Run the app
     JAWAApp().run()

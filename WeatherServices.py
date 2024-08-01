@@ -1,12 +1,18 @@
 import os
 import requests
+from K import Constants as k
 from GeocodeCity import Results
 from OneCallModel import WeatherData
 from UserPreferences import UserPreferences, UserLocation
 
 
 class WeatherServices:
-    user_prefs = UserPreferences(**UserPreferences.load())
+    try:
+        user_prefs = UserPreferences(**UserPreferences.load())
+    except FileNotFoundError as fnfe:
+        print(f"Error loading user preferences {fnfe}")
+        user_prefs = UserPreferences(**k.user_pref_init_dict)
+        user_prefs.save()
     api_key = os.environ.get('OPEN_WEATHER_API_KEY')
     units = user_prefs.units
     state_code = user_prefs.location.state_code_usa
