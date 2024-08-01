@@ -15,7 +15,7 @@ class WeatherServices:
         user_prefs.save()
     api_key = os.environ.get('OPEN_WEATHER_API_KEY')
     units = user_prefs.units
-    state_code = user_prefs.location.state_code_usa
+    state_code = ""
     country_code = user_prefs.location.country
     limit = 3
 
