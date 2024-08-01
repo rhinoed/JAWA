@@ -1,40 +1,13 @@
 {
     "units": "imperial",
-    "saved_location": true,
+    "saved_location": false,
     "location": {
-        "name": "Fresno",
-        "lat": 36.7295295,
-        "lon": -119.70886126075588,
-        "country": "US",
-        "state": "California",
-        "state_code_usa": "CA"
+        "name": "",
+        "lat": "",
+        "lon": "",
+        "country": "",
+        "state": "",
+        "state_code_usa": ""
     },
-    "favorites": [
-        {
-            "name": "Sacramento",
-            "lat": 38.5810606,
-            "lon": -121.493895,
-            "country": "US",
-            "state": "California",
-            "local_names": {
-                "ar": "\u0633\u0627\u0643\u0631\u0627\u0645\u0646\u062a\u0648",
-                "ja": "\u30b5\u30af\u30e9\u30e1\u30f3\u30c8",
-                "lt": "Sakramentas",
-                "pl": "Sacramento",
-                "ru": "\u0421\u0430\u043a\u0440\u0430\u043c\u0435\u043d\u0442\u043e",
-                "ta": "\u0b9a\u0bc7\u0b95\u0bcd\u0bb0\u0bae\u0bc6\u0ba3\u0bcd\u0b9f\u0bcb",
-                "zh": "\u6c99\u52a0\u7dec\u5ea6/\u8428\u514b\u62c9\u95e8\u6258",
-                "uk": "\u0421\u0430\u043a\u0440\u0430\u043c\u0435\u043d\u0442\u043e",
-                "en": "Sacramento"
-            }
-        },
-        {
-            "name": "Clovis",
-            "lat": 36.8252277,
-            "lon": -119.7029194,
-            "country": "US",
-            "state": "California",
-            "local_names": null
-        }
-    ]
+    "favorites": []
 }

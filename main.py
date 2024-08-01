@@ -6,17 +6,18 @@
 
 # Import modules
 import math
-import UserPreferences
 from K import Constants as k
-from WeatherServices import WeatherServices
+from UserPreferences import UserPreferences as up
+from WeatherServices import WeatherServices as ws
 from GeocodeCity import Results
 from datetime import datetime
+from kivy.core.window import Window
 from kivy.app import App
 from kivy.properties import ObjectProperty
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.textinput import TextInput
 from kivy.properties import StringProperty
-from kivy.core.window import Window
+from kivy.uix.boxlayout import BoxLayout
+
+
 
 
 class Weather(BoxLayout):
@@ -29,11 +30,14 @@ class Weather(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        prefs = UserPreferences.UserPreferences(**UserPreferences.UserPreferences.load())
+        prefs = up(**up.load())
         if prefs.saved_location:
-            forecast = WeatherServices.get_weather_for_location(prefs)
-            self.weather_output = forecast["weather"]
-            self.city = forecast["city"]
+            forecast = ws.get_weather_for_location(prefs)
+            try:
+                self.weather_output = forecast["weather"]
+                self.city = forecast["city"]
+            except TypeError as te:
+                print(f"An error occured geo_loacte returned NONE:{te}")
             self.top_menu.weather_response = self.weather_output
             self.output_weather()
         
@@ -41,19 +45,23 @@ class Weather(BoxLayout):
         if text_input == "":
             self.top_menu.text_input.hint_text = "You must enter a city"
         else:
-            print(f"Search button pressed {text_input}")
-            forcast = WeatherServices.get_weather_for(text_input)
+            # get the weather for the city entered
+            forcast = ws.get_weather_for(text_input)
+            # check if the forcast is not None
+            try:
+                self.weather_output = forcast["weather"]
+                self.city = forcast["city"]
+            except TypeError as te:
+                print(f"An error occured geo_loacte returned NONE:{te}")
             # clear text input
             self.top_menu.text_input.text = ""
-            self.weather_output = forcast["weather"]
-            self.city = forcast["city"]
+            # set the weather response
             self.top_menu.weather_response = self.weather_output
             # write the weather output
             self.output_weather()
-            print(self.weather_output)
 
     def get_user_preferred_unints(self) -> str:
-        units = UserPreferences.UserPreferences(**UserPreferences.UserPreferences.load()).units
+        units =up(**up.load()).units
         match units:
             case "metric":
                 return str(chr(0x2103))
@@ -63,13 +71,16 @@ class Weather(BoxLayout):
                 raise ValueError("Invalid unit type")
             
     def get_favorite_weather(self,location):
-        forecast = WeatherServices.get_weather_for_location(None, location)
-        self.weather_output = forecast["weather"]
-        self.city = forecast["city"]
+        forecast = ws.get_weather_for_location(None, location)
+        try:
+            self.weather_output = forecast["weather"]
+            self.city = forecast["city"]
+        except TypeError as te:
+            print(f"An error occured geo_loacte returned NONE:{te}")
         self.output_weather()
 
     def output_weather(self):
-        user_prefs = UserPreferences.UserPreferences(**UserPreferences.UserPreferences.load())
+        user_prefs = up(**up.load())
         units = user_prefs.units
         if self.weather_output == None:
             raise ValueError("No weather data to display")
@@ -162,7 +173,7 @@ class TopMenu(BoxLayout):
         super().__init__(**kwargs)
 
     def get_default_units(self, button):
-        units = UserPreferences.UserPreferences(**UserPreferences.UserPreferences.load()).units
+        units = up(**up.load()).units
         if button == units:
             return "down"
         else:
@@ -170,7 +181,7 @@ class TopMenu(BoxLayout):
 
     def unit_button_pressed(self, unit):
         print(f"Unit button pressed {unit}")
-        prefs = UserPreferences.UserPreferences(**UserPreferences.UserPreferences.load())
+        prefs = up(**up.load())
         match unit:
             case "metric":
                 prefs.units = unit
@@ -184,19 +195,24 @@ class TopMenu(BoxLayout):
         prefs.save()
 
     def set_location_pressed(self, city: str):
-        prefs = UserPreferences.UserPreferences(**UserPreferences.UserPreferences.load())
+        prefs = up(**up.load())
         if city != "":
-            location = Results(WeatherServices.geo_locate(city)).cities[0]
-            prefs.set_location(location)
+            try:
+                location = Results(ws.geo_locate(city)).cities[0]
+                prefs.set_location(location)
+            except IndexError as ie:
+                print(f"An error occured geo_loacte returned NONE:{ie}")
         else:
             print("No city provided") 
 
     def add_button_pressed(self, city: str):
-        prefs = UserPreferences.UserPreferences(**UserPreferences.UserPreferences.load())
+        prefs = up(**up.load())
         if city != "":
-            location = Results(WeatherServices.geo_locate(city)).cities[0]
-            prefs.add_to_favorites(location)
-            print(self.weather_response)
+            try:
+                location = Results(ws.geo_locate(city)).cities[0]
+                prefs.add_to_favorites(location)
+            except IndexError as ie:
+                print(f"An error occured geo_loacte returned NONE:{ie}")
         else:
             print("No city provided")
 
@@ -220,17 +236,6 @@ class Favorite(BoxLayout):
     favorite_city_label = StringProperty("")
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
-
-        
-    def disable_favorite(self):
-        user_prefs = UserPreferences.UserPreferences(**UserPreferences.UserPreferences.load())
-        
-        
-    
-    def get_favorite_weather(self):
-        #forecast = WeatherServices.get_weather_for_location(None,self.favorite_location)
-        #self.favorite_forecast = forecast["weather"]
-        print(self.favorite_location.name)
         
 
 class JAWAApp(App):
