@@ -9,20 +9,14 @@ import math
 import UserPreferences
 from K import Constants as k
 from WeatherServices import WeatherServices
-from GeocodeCity import Results, City
+from GeocodeCity import Results
 from datetime import datetime
 from kivy.app import App
 from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 from kivy.properties import StringProperty
-from kivy.uix.label import Label
-from kivy.uix.stacklayout import StackLayout
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.widget import Widget
-from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
-from kivy.uix.button import Button
 
 
 class Weather(BoxLayout):
@@ -42,12 +36,6 @@ class Weather(BoxLayout):
             self.city = forecast["city"]
             self.top_menu.weather_response = self.weather_output
             self.output_weather()
-        # if len(prefs.favorites) == 0:
-        #     print("favorites is empty")
-        #     self.remove_widget(self.current_weather)
-        #     self.remove_widget(self.favorite)
-        #     self.remove_widget(self.ids.float_layout.weather.favorite_scroll)
-        #     #self.favorite.remove_widget(self.ids.favorite)
         
     def search_button_pressed(self, text_input):
         if text_input == "":
@@ -148,10 +136,6 @@ class Weather(BoxLayout):
                 self.remove_widget(self.ids.favorite)
         
 
-#class DailyView(BoxLayout):
-#    """This class will display the daily weather forecast. Defined in the .kv file"""
-#    pass
-
 
 class CurrentWeather(BoxLayout):
     
@@ -248,12 +232,6 @@ class Favorite(BoxLayout):
         #self.favorite_forecast = forecast["weather"]
         print(self.favorite_location.name)
         
-
-
-
-class CitySearch(TextInput):
-    pass
-
 
 class JAWAApp(App):
     def build(self):
