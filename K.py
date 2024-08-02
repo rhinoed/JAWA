@@ -12,7 +12,7 @@ class Constants():
             "metric_visability": "meters"
         }
     
-    user_init_location_dict = {
+    user_location_init_dict = {
             "name": "", "lat": 0.0,
             "lon": 0.0, "country": "",
             "state": "",
@@ -21,7 +21,7 @@ class Constants():
     user_pref_init_dict = {
             "units": "imperial",
             "saved_location": False,
-            "location": user_init_location_dict,
+            "location": user_location_init_dict,
             "favorites": []
         }
     def __init__(self) -> None:

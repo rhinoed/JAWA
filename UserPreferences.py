@@ -35,13 +35,21 @@ class UserPreferences:
 
     @classmethod
     def load(cls):
-        with open("user_preferences.json", "r") as prefs:
-            try:
-                return json.load(prefs)
-            except FileExistsError as fileEr:
-                print(fileEr)
-            except PermissionError as perEr:
-                print(perEr)
+        try:
+            with open("user_preferences.json", "r") as prefs:
+                try:
+                    return json.load(prefs)
+                except FileExistsError as fileEr:
+                    print(fileEr)
+                except PermissionError as perEr:
+                    print(perEr)
+        except FileNotFoundError as fnfEr:
+            print(fnfEr)
+            # Setup the user preferences
+            user_prefs = UserPreferences(**k.user_pref_init_dict)
+            user_prefs.save()
+            # return the default user preferences
+            return k.user_pref_init_dict
 
     def save(self):
         if type(self) != UserPreferences:
