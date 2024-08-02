@@ -11,12 +11,16 @@ from UserPreferences import UserPreferences as up
 from WeatherServices import WeatherServices as ws
 from GeocodeCity import Results
 from datetime import datetime
+from EmptyViews import EmptyFavorites as ef
 from kivy.core.window import Window
 from kivy.app import App
 from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty
 from kivy.uix.boxlayout import BoxLayout
+from kivy.lang import Builder
 
+# Load the kv files
+Builder.load_file("empty_favorites.kv")
 
 
 
@@ -40,6 +44,11 @@ class Weather(BoxLayout):
                 print(f"An error occured geo_loacte returned NONE:{te}")
             self.top_menu.weather_response = self.weather_output
             self.output_weather()
+        if len(prefs.favorites) == 0:
+            self.favorite.clear_widgets()
+            empty_favorite = ef()
+            empty_favorite.weather_binding = self
+            self.favorite.add_widget(empty_favorite)
         
     def search_button_pressed(self, text_input):
         if text_input == "":

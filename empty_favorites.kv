@@ -1,0 +1,35 @@
+#:kivy 2.3.0
+
+<EmptyFavorites>:
+    orientation: 'vertical'
+    padding: 10
+    spacing: 10
+    canvas.before:
+        Color:
+            rgba: 0.15, 0.15, 0.15, 0.5
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [10,]
+    Label:
+        text: 'No favorites yet'
+        font_size: "28dp"
+        halign: 'center'
+        valign: 'middle'
+
+    Button:
+        text: 'Add some favorites'
+        size_hint: None, None
+        size: 200, 40
+        font_size: 18
+        background_color: .65,.20,.08, 0
+        pos_hint: {'center_x': 0.5}
+        color: 1, 1, 1, 1
+        on_press: root.add_favorite_button_pressed()
+        canvas.before:
+            Color:
+                rgba: (.65,.20,.08,1) if self.state=='normal' else (.25,.25,.25,1)
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius: [10]
