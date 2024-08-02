@@ -12,16 +12,18 @@ from WeatherServices import WeatherServices as ws
 from GeocodeCity import Results
 from datetime import datetime
 from EmptyViews import EmptyFavorites as ef
+from ModalView import AddFavorite as af
 from kivy.core.window import Window
 from kivy.app import App
 from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.popup import Popup
 from kivy.lang import Builder
 
 # Load the kv files
 Builder.load_file("empty_favorites.kv")
-
+Builder.load_file("add_favorite.kv")
 
 
 class Weather(BoxLayout):
@@ -49,6 +51,17 @@ class Weather(BoxLayout):
             empty_favorite = ef()
             empty_favorite.weather_binding = self
             self.favorite.add_widget(empty_favorite)
+    
+    def show_add_favorite(self):
+        view = af()
+        self.modal_popup = Popup(title="Add Favorite",
+                                 content=view,
+                                 size_hint=(0.5, 0.5),
+                                 title_color=(1, 1, 1, 1,),
+                                 separator_color=(.65,.20,.08,1),
+                                 auto_dismiss=False)
+        view.parent_popup = self.modal_popup
+        self.modal_popup.open()
         
     def search_button_pressed(self, text_input):
         if text_input == "":

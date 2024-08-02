@@ -4,10 +4,13 @@
 
 # Import the necessary modules
 from kivy.uix.boxlayout import BoxLayout
+from kivy.properties import ObjectProperty
 
 class EmptyFavorites(BoxLayout):
+    weather_binding = ObjectProperty(None)
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
     def add_favorite_button_pressed(self):
-        print("Add Favorite Button Pressed")
+        # display a modal view to add a favorite
+        self.weather_binding.show_add_favorite()
     
