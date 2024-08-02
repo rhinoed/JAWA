@@ -1,0 +1,50 @@
+#:kivy 2.3.0
+
+# <RoundedTextInput@TextInput>:
+#     background_color: 0, 0, 0, 0
+#     canvas.before:
+#         Color:
+#             rgba: 0.15, 0.15, 0.15, .5
+#         RoundedRectangle:
+#             pos: self.pos
+#             size: self.size
+#             radius: [10,]
+#         Color:
+#             rgba: (1, 1, 1, 1) if self.focus else (.65, .65, .65, .5)
+
+<AddFavorite>:
+    orientation: 'vertical'
+    padding: 10
+    spacing: 10
+    canvas.before:
+        Color:
+            rgba: 0.10, 0.10, 0.10, 1
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [10,]
+    Label:
+        text: 'Enter a city below to add it to your favorites'
+        font_size: "16dp"
+        halign: 'center'
+        valign: 'middle'
+    RoundedTextInput:
+        id: favorite_input
+        border_color: 1, 1, 1, .8
+        center_y: self.parent.center_y
+        hint_text: "Enter a favorite"
+        multiline: False
+        size_hint: None, None
+        size: 200, 40
+        valign: 'middle'
+        pos_hint: {'center_x': 0.5}
+    RoundedButton:
+        text: 'Add'
+        size_hint: None, None
+        size: 200, 40
+        font_size: 18
+        background_color: .65,.20,.08, 0
+        pos_hint: {'center_x': 0.5}
+        color: 1, 1, 1, 1
+        on_press: root.dismiss()
+        
