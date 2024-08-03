@@ -2,7 +2,6 @@
 
 <RoundedButton@Button>:
     background_color: .65,.20,.08,0
-    background_normal: ""
     canvas.before:
         Color:
             rgba: (.65,.20,.08,1) if self.state=='normal' else (.25,.25,.25,1)
@@ -99,7 +98,7 @@
             size_hint_y: None
             width: "100dp"
             height: "40dp" 
-            on_release: root.parent.parent.parent.search_button_pressed(search_input.text)
+            on_release: root.weather_binding.search_button_pressed(search_input.text)
         RoundedButton:
             text: "Set\nLocation"
             font_size: 14
