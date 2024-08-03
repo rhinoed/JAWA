@@ -102,11 +102,10 @@ class DailyForecast:
     weather: List[Weather]
     clouds: int
     pop: float
-    rain: float
+    rain: float = None
+    snow: float = None
     uvi: float = None
-    rain: dict = None
-    snow: dict = None
-
+    
 
     def __post_init__(self):
         self.temp = DailyTemperature(**self.temp)
