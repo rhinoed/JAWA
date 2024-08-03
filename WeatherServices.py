@@ -4,7 +4,7 @@ from K import Constants as k
 from GeocodeCity import Results
 from OneCallModel import WeatherData
 from UserPreferences import UserPreferences
-
+import sys
 
 class WeatherServices:
     
@@ -28,7 +28,7 @@ class WeatherServices:
         if request.status_code == 200:
             return request.json()
         else:
-            raise ValueError("The request did not return a valid location")
+            raise IndexError("The request did not return a valid location")
 
 
     @classmethod
@@ -45,6 +45,7 @@ class WeatherServices:
                     }
         except IndexError as ie:
             print(f"There were no locations returned:{ie}")
+            raise ie
         
     
     @classmethod
@@ -64,5 +65,7 @@ class WeatherServices:
                     "weather": WeatherData(**request)
                     }
 
-        except ValueError as ve:
-            print(ve)
+        except TypeError as te:
+            print(te)
+        except IndexError as ie:
+            print(ie)
