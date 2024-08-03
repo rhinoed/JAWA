@@ -37,6 +37,7 @@ class Weather(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         prefs = up(**up.load())
+        self.top_menu.weather_binding = self
         if prefs.saved_location:
             forecast = ws.get_weather_for_location(prefs)
             try:
@@ -51,9 +52,13 @@ class Weather(BoxLayout):
             empty_favorite = ef()
             empty_favorite.weather_binding = self
             self.favorite.add_widget(empty_favorite)
+        elif not prefs.saved_location and len(prefs.favorites) != 0:
+            self.get_favorite_weather(prefs.favorites[0])
     
     def show_add_favorite(self):
         view = af()
+        view.weather_binding = self
+        view.user_prefs = up(**up.load())
         self.modal_popup = Popup(title="Add Favorite",
                                  content=view,
                                  size_hint=(0.5, 0.5),
@@ -67,18 +72,17 @@ class Weather(BoxLayout):
         if text_input == "":
             self.top_menu.text_input.hint_text = "You must enter a city"
         else:
-            # get the weather for the city entered
-            forcast = ws.get_weather_for(text_input)
-            # check if the forcast is not None
             try:
-                self.weather_output = forcast["weather"]
-                self.city = forcast["city"]
-            except TypeError as te:
-                print(f"An error occured geo_loacte returned NONE:{te}")
+                # get the weather for the city entered
+                forcast = ws.get_weather_for(text_input)
+            except IndexError as ie:
+                print(f"An error occured geo_loacte returned NONE:{ie}")
+                raise IndexError("There were no locations returned")
+
+            self.weather_output = forcast["weather"]
+            self.city = forcast["city"]
             # clear text input
             self.top_menu.text_input.text = ""
-            # set the weather response
-            self.top_menu.weather_response = self.weather_output
             # write the weather output
             self.output_weather()
 
@@ -164,10 +168,6 @@ class Weather(BoxLayout):
                     # creae a binding object to the weather class instance
                     view.weather_binding = self
                     self.favorite.add_widget(view)
-            else:
-                self.favorite.clear_widgets()
-                self.remove_widget(self.ids.favorite)
-        
 
 
 class CurrentWeather(BoxLayout):
@@ -187,7 +187,7 @@ class CurrentWeather(BoxLayout):
 
 class TopMenu(BoxLayout):
     text_input = ObjectProperty(None)
-    weather_response = ObjectProperty(None)
+    weather_binding = ObjectProperty(None)
     imperial = ObjectProperty(None)
     metric = ObjectProperty(None)
 
@@ -227,16 +227,15 @@ class TopMenu(BoxLayout):
         else:
             print("No city provided") 
 
-    def add_button_pressed(self, city: str):
-        prefs = up(**up.load())
-        if city != "":
-            try:
-                location = Results(ws.geo_locate(city)).cities[0]
-                prefs.add_to_favorites(location)
-            except IndexError as ie:
-                print(f"An error occured geo_loacte returned NONE:{ie}")
-        else:
-            print("No city provided")
+    def add_button_pressed(self):
+        try:    
+            self.weather_binding.show_add_favorite()
+        except AttributeError as ae:
+            print(f"An error occured geo_loacte returned NONE:{ae}")
+        except IndexError as ie:
+            print(f"An error occured geo_loacte returned NONE:{ie}")
+            raise IndexError("There were no locations returned")
+       
 
 class DailyWeather(BoxLayout):
     day_label = StringProperty("")
