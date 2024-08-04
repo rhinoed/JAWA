@@ -11,8 +11,9 @@ from UserPreferences import UserPreferences as up
 from WeatherServices import WeatherServices as ws
 from GeocodeCity import Results
 from datetime import datetime
-from EmptyViews import EmptyFavorites as ef
+from EmptyViews import (EmptyFavorites as ef, EmptyDailyView as edv)
 from ModalView import AddFavorite as af
+from Alert import Alert as alert
 from kivy.core.window import Window
 from kivy.app import App
 from kivy.properties import ObjectProperty
@@ -24,7 +25,8 @@ from kivy.lang import Builder
 # Load the kv files
 Builder.load_file("empty_favorites.kv")
 Builder.load_file("add_favorite.kv")
-
+Builder.load_file("empty_daily_view.kv")
+Builder.load_file("alert.kv")
 
 class Weather(BoxLayout):
     top_menu = ObjectProperty(None)
@@ -47,6 +49,12 @@ class Weather(BoxLayout):
                 print(f"An error occured geo_loacte returned NONE:{te}")
             self.top_menu.weather_response = self.weather_output
             self.output_weather()
+        else:
+            self.daily_weather.clear_widgets()
+            empty_daily = edv()
+            empty_daily.weather_binding = self
+            self.daily_weather.add_widget(empty_daily)
+
         if len(prefs.favorites) == 0:
             self.favorite.clear_widgets()
             empty_favorite = ef()
@@ -54,6 +62,8 @@ class Weather(BoxLayout):
             self.favorite.add_widget(empty_favorite)
         elif not prefs.saved_location and len(prefs.favorites) != 0:
             self.get_favorite_weather(prefs.favorites[0])
+        
+            
     
     def show_add_favorite(self):
         view = af()
@@ -65,6 +75,19 @@ class Weather(BoxLayout):
                                  title_color=(1, 1, 1, 1,),
                                  separator_color=(.65,.20,.08,1),
                                  auto_dismiss=False)
+        view.parent_popup = self.modal_popup
+        self.modal_popup.open()
+    
+    def show_alert(self, message,image):
+        view = alert()
+        view.message = message
+        view.image = image
+        self.modal_popup = Popup(title="Alert",
+                                 content=view,
+                                 size_hint=(0.5, 0.5),
+                                 title_color=(1, 1, 1, 1,),
+                                 separator_color=(.65,.20,.08,1),
+                                 auto_dismiss=True)
         view.parent_popup = self.modal_popup
         self.modal_popup.open()
         
@@ -147,17 +170,19 @@ class Weather(BoxLayout):
             self.current_weather.current_visibility_label.text = f"{self.weather_output.current.visibility} {k.weather_units["metric_visability"]}" if units == "metric" else k.convert_visability(self.weather_output.current.visibility)
             # Clear the existing daily view section
             self.daily_weather.clear_widgets()
-            # Iterate over daily forecast to create the daily weather section
-            for day in self.weather_output.daily:
-                # Create view
-                view = DailyWeather()
-                view.day_label = DailyWeather.get_day_from_timestamp(day.dt)
-                view.daily_temp_label = str(f"{math.floor(day.temp.max)}{self.get_user_preferred_unints()}")
-                view.daily_description_label = day.weather[0].main
-                icon = f"{day.weather[0].icon}@2x.png"
-                view.daily_weather_icon = f"icons/{icon}"
-                # Add view to window
-                self.daily_weather.add_widget(view)
+            if self.weather_output.daily != None:
+                # Iterate over daily forecast to create the daily weather section
+                for day in self.weather_output.daily:
+                    # Create view
+                    view = DailyWeather()
+                    view.day_label = DailyWeather.get_day_from_timestamp(day.dt)
+                    view.daily_temp_label = str(f"{math.floor(day.temp.max)}{self.get_user_preferred_unints()}")
+                    view.daily_description_label = day.weather[0].main
+                    icon = f"{day.weather[0].icon}@2x.png"
+                    view.daily_weather_icon = f"icons/{icon}"
+                    # Add view to window
+                    self.daily_weather.add_widget(view)
+
             # Create favorite view
             if len(user_prefs.favorites) != 0:
                 self.favorite.clear_widgets()
