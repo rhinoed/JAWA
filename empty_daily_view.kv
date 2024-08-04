@@ -1,0 +1,22 @@
+#:kivy 2.3.0
+
+<EmptyDailyView>:
+    orientation: 'vertical'
+    canvas.before:
+        Color:
+            rgba: 0.15, 0.15, 0.15, .5
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [10,]
+    Image:
+        source: 'images/bb_8.png'
+        size_hint: 1, 1
+        fit_mode: 'contain'
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+    Label:
+        id: date_label
+        text: 'No Weather Data'
+        font_size: 20
+        color: 1, 1, 1, 1
+        halign: 'center'
