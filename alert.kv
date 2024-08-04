@@ -1,0 +1,28 @@
+#:kivy 2.3.0
+
+<Alert>:
+    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        canvas.before:
+            Color:
+                rgba: 0.10, 0.10, 0.10, 1
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius: [10,]
+        Image:
+            source: root.image
+            size_hint: 1, 1
+            fit_mode: 'contain'
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        Label:
+            id: alert_text
+            text: root.message
+            font_size: 16
+            color: 1, 1, 1, 1
+            halign: 'center'
+            valign: 'middle'
+            size_hint: 1, 1
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
