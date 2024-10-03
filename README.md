@@ -11,7 +11,7 @@ This app began life as a final project for a python class I took in the fall of 
 As you can see it is a simple app, but it now has the major features I orignally envisioned. Which are:
 
 - Current Temperature and Conditions
-- More detailed weather information including high and sunrie, sunset, humidity, and wind speed
+- More detailed weather information including high and sunrise, sunset, humidity, and wind speed
 - A multi day forecast section
 - A section for favorite locations
 - Persistent user preferences
