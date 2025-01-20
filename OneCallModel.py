@@ -1,8 +1,23 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
+@dataclass
+class Rain:
+    one_hour: float = None  # Maps 1h
 
+    def __post_init__(self):
+        # Map the key `1h` to `one_hour` if present
+        if '1h' in self.__dict__:
+            self.one_hour = self.__dict__.pop('1h')
+
+@dataclass
 class Snow:
-    ...
+    one_hour: float = None
+
+    def __post_init__(self):
+        if '1h' in self.__dict__:
+            self.one_hour = self.__dict__.pop('1h')
+
+    
 
 @dataclass
 class Weather:
@@ -29,11 +44,12 @@ class CurrentWeather:
     wind_deg: int
     weather: List[Weather]
     wind_gust: float = None
-    snow: dict = None
-    rain: dict = None
+    snow: Snow = None
+    rain: Rain = None
 
     def __post_init__(self):
         self.weather = [Weather(**obj) for obj in self.weather]
+        
 
 
 @dataclass
@@ -51,12 +67,12 @@ class HourlyForecast:
     dew_point: float
     uvi: float
     clouds: int
-    visibility: int
     wind_speed: float
     wind_deg: int
     wind_gust: float
     weather: List[Weather]
     pop: float
+    visibility: int = None
     rain: dict = None
     snow: dict = None
 
